@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>VBP Tools — Value-Based Procurement Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --primary:#1565C0;--primary-light:#E3F2FD;--primary-dark:#0D47A1;
+  --green:#2E7D32;--green-light:#E8F5E9;
+  --red:#C62828;--red-light:#FFEBEE;
+  --orange:#E65100;--orange-light:#FFF3E0;
+  --purple:#6A1B9A;--purple-light:#F3E5F5;
+  --text:#222;--muted:#666;--border:#E0E0E0;--bg:#F5F7FA;
+}
+body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);font-size:16px;line-height:1.7;}
+
+/* ── NAV ── */
+.app-header{background:var(--primary-dark);color:#fff;padding:0 24px;}
+.app-header-inner{max-width:1000px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px;}
+.app-logo{font-size:1.1rem;font-weight:700;display:flex;align-items:center;gap:8px;}
+.app-logo span{opacity:.7;font-size:.85rem;font-weight:400;}
+
+.tab-bar{background:#fff;border-bottom:2px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.tab-bar-inner{max-width:1000px;margin:0 auto;display:flex;overflow-x:auto;}
+.tab-btn{padding:14px 22px;border:none;background:none;font-family:'Sarabun',sans-serif;font-size:.95rem;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:all .2s;}
+.tab-btn.active{color:var(--primary);border-bottom-color:var(--primary);}
+.tab-btn:hover{background:#f5f7fa;color:var(--primary);}
+
+/* ── PANELS ── */
+.page{display:none;max-width:1000px;margin:0 auto;padding:32px 20px 64px;}
+.page.active{display:block;}
+
+/* ── CARDS ── */
+.card{background:#fff;border-radius:16px;padding:28px;box-shadow:0 2px 12px rgba(0,0,0,.06);margin-bottom:24px;}
+.card-title{font-size:1.1rem;font-weight:700;color:var(--primary-dark);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+
+/* ── PAGE 1: ARTICLE ── */
+.hero{background:linear-gradient(135deg,#1565C0 0%,#0D47A1 60%,#1a237e 100%);color:#fff;border-radius:20px;padding:40px 36px;margin-bottom:28px;}
+.hero h1{font-size:1.8rem;font-weight:700;line-height:1.4;margin-bottom:12px;}
+.hero p{opacity:.85;font-size:1rem;max-width:600px;}
+.badge-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;}
+.badge{background:rgba(255,255,255,.18);border-radius:20px;padding:5px 14px;font-size:.82rem;font-weight:600;}
+
+.article-body p{margin-bottom:18px;line-height:1.9;color:#333;}
+.article-body h2{font-size:1.2rem;font-weight:700;color:var(--primary-dark);margin:32px 0 12px;padding-left:12px;border-left:4px solid var(--primary);}
+blockquote{background:var(--green-light);border-left:5px solid var(--green);padding:16px 20px;border-radius:0 10px 10px 0;margin:24px 0;color:var(--green);font-style:italic;}
+
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin:24px 0;}
+.info-card{border-radius:12px;padding:18px;border-top:4px solid;}
+.info-card.red{background:var(--red-light);border-color:var(--red);}
+.info-card.blue{background:var(--primary-light);border-color:var(--primary);}
+.info-card.green{background:var(--green-light);border-color:var(--green);}
+.info-card.purple{background:var(--purple-light);border-color:var(--purple);}
+.info-card h3{font-size:.9rem;font-weight:700;margin-bottom:6px;}
+.info-card.red h3{color:var(--red);}
+.info-card.blue h3{color:var(--primary);}
+.info-card.green h3{color:var(--green);}
+.info-card.purple h3{color:var(--purple);}
+.info-card p{font-size:.85rem;color:#555;margin:0;}
+
+/* ── PAGE 2: CALCULATOR ── */
+.calc-section{margin-bottom:28px;}
+.calc-section h3{font-size:1rem;font-weight:700;color:#fff;padding:10px 16px;border-radius:10px 10px 0 0;margin-bottom:0;}
+.calc-section h3.red{background:var(--red);}
+.calc-section h3.blue{background:var(--primary);}
+.calc-section h3.green{background:var(--green);}
+.calc-section h3.purple{background:var(--purple);}
+.calc-fields{background:#fff;border:1px solid var(--border);border-radius:0 0 10px 10px;padding:20px;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px;}
+.field-group{display:flex;flex-direction:column;gap:4px;}
+.field-group label{font-size:.82rem;color:var(--muted);font-weight:600;}
+.field-group input{padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:'Sarabun',sans-serif;font-size:.95rem;transition:.2s;}
+.field-group input:focus{outline:none;border-color:var(--primary);}
+.field-group .unit{font-size:.75rem;color:#aaa;margin-top:2px;}
+
+.total-bar{background:var(--primary-dark);color:#fff;border-radius:14px;padding:22px 28px;margin-top:24px;}
+.total-bar-title{font-size:.9rem;opacity:.75;margin-bottom:4px;}
+.total-row{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.total-amount{font-size:2.2rem;font-weight:700;}
+.total-breakdown{font-size:.82rem;opacity:.8;text-align:right;}
+
+.compare-section{margin-top:28px;}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.compare-card{border:2px solid var(--border);border-radius:14px;padding:20px;}
+.compare-card h4{font-size:.95rem;font-weight:700;color:var(--muted);margin-bottom:14px;}
+.compare-card input{width:100%;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:'Sarabun',sans-serif;font-size:.9rem;margin-bottom:8px;}
+.compare-card input:focus{outline:none;border-color:var(--primary);}
+.compare-result{background:var(--primary-light);border-radius:10px;padding:16px;margin-top:16px;text-align:center;}
+.compare-result .winner{font-size:1.1rem;font-weight:700;color:var(--primary-dark);}
+.compare-result .saving{font-size:.9rem;color:var(--green);font-weight:600;margin-top:4px;}
+
+.btn-calc{background:var(--primary);color:#fff;border:none;border-radius:50px;padding:12px 32px;font-family:'Sarabun',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:.2s;margin-top:16px;}
+.btn-calc:hover{background:var(--primary-dark);}
+.btn-reset-calc{background:#fff;color:var(--muted);border:2px solid var(--border);border-radius:50px;padding:12px 24px;font-family:'Sarabun',sans-serif;font-size:1rem;cursor:pointer;margin-top:16px;margin-left:10px;}
+
+/* ── PAGE 3: MEAT ASSESSMENT ── */
+.meat-intro{background:linear-gradient(135deg,#2E7D32,#1B5E20);color:#fff;border-radius:16px;padding:24px 28px;margin-bottom:24px;}
+.meat-intro h2{font-size:1.3rem;margin-bottom:8px;}
+.meat-intro p{opacity:.85;font-size:.95rem;}
+
+.meat-progress-wrap{background:#fff;border-radius:14px;padding:20px 24px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.meat-progress-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.meat-score-display{font-size:2rem;font-weight:700;color:var(--primary-dark);}
+.meat-score-label{font-size:.8rem;color:var(--muted);}
+.meat-bar-bg{background:#e0e7ff;border-radius:99px;height:12px;overflow:hidden;}
+.meat-bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#1565C0,#42A5F5);transition:width .4s;}
+
+.criteria-section{margin-bottom:20px;}
+.criteria-header{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:12px 12px 0 0;color:#fff;font-weight:700;font-size:.95rem;cursor:pointer;user-select:none;}
+.criteria-header.red{background:var(--red);}
+.criteria-header.blue{background:var(--primary);}
+.criteria-header.green{background:var(--green);}
+.criteria-header.purple{background:var(--purple);}
+.criteria-header .toggle{margin-left:auto;transition:.3s;}
+.criteria-header.collapsed .toggle{transform:rotate(-90deg);}
+.criteria-body{background:#fff;border:1px solid var(--border);border-radius:0 0 12px 12px;overflow:hidden;transition:max-height .3s ease;}
+.criteria-body.collapsed{max-height:0;}
+.criteria-row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:16px;padding:12px 16px;border-bottom:1px solid #f5f5f5;}
+.criteria-row:last-child{border-bottom:none;}
+.criteria-row:hover{background:#fafafa;}
+.criteria-label{font-size:.9rem;color:var(--text);}
+.criteria-sub{font-size:.78rem;color:var(--muted);}
+.star-rating{display:flex;gap:4px;}
+.star-btn{background:none;border:none;font-size:1.4rem;cursor:pointer;color:#ddd;transition:.15s;line-height:1;padding:0;}
+.star-btn.active{color:#FFC107;}
+.star-btn:hover{color:#FFD54F;transform:scale(1.2);}
+.score-tag{font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--primary-light);color:var(--primary);}
+
+.meat-result{background:#fff;border-radius:16px;padding:28px;box-shadow:0 4px 20px rgba(0,0,0,.1);margin-top:24px;}
+.meat-result h3{font-size:1.1rem;font-weight:700;color:var(--primary-dark);margin-bottom:16px;}
+.result-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+.result-item{border-radius:10px;padding:14px 16px;text-align:center;}
+.result-item.red{background:var(--red-light);}
+.result-item.blue{background:var(--primary-light);}
+.result-item.green{background:var(--green-light);}
+.result-item.purple{background:var(--purple-light);}
+.result-item .r-score{font-size:1.6rem;font-weight:700;}
+.result-item.red .r-score{color:var(--red);}
+.result-item.blue .r-score{color:var(--primary);}
+.result-item.green .r-score{color:var(--green);}
+.result-item.purple .r-score{color:var(--purple);}
+.result-item .r-label{font-size:.8rem;color:var(--muted);margin-top:4px;}
+.overall-score{text-align:center;padding:24px;background:linear-gradient(135deg,var(--primary-dark),var(--primary));border-radius:14px;color:#fff;margin-top:16px;}
+.overall-score .big{font-size:3rem;font-weight:700;}
+.overall-score .lbl{font-size:.9rem;opacity:.8;}
+.verdict{margin-top:12px;font-size:1rem;font-weight:700;padding:8px 20px;border-radius:20px;display:inline-block;}
+.verdict.high{background:#C8E6C9;color:var(--green);}
+.verdict.med{background:#FFF9C4;color:#F57F17;}
+.verdict.low{background:var(--red-light);color:var(--red);}
+.btn-meat{background:var(--green);color:#fff;border:none;border-radius:50px;padding:12px 32px;font-family:'Sarabun',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:.2s;margin-top:16px;}
+.btn-meat:hover{background:#1B5E20;}
+.btn-meat-reset{background:#fff;color:var(--muted);border:2px solid var(--border);border-radius:50px;padding:12px 24px;font-family:'Sarabun',sans-serif;font-size:1rem;cursor:pointer;margin-top:16px;margin-left:10px;}
+
+/* ── PAGE 4: QUIZ ── */
+.quiz-header{background:linear-gradient(135deg,var(--purple),#4A148C);color:#fff;border-radius:16px;padding:24px 28px;margin-bottom:24px;}
+.quiz-header h2{font-size:1.3rem;margin-bottom:6px;}
+.quiz-header p{opacity:.85;font-size:.9rem;}
+
+.quiz-progress{background:#fff;border-radius:12px;padding:16px 20px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,.06);display:flex;align-items:center;gap:16px;}
+.qprog-bar{flex:1;height:10px;background:#e0e7ff;border-radius:99px;overflow:hidden;}
+.qprog-fill{height:100%;background:linear-gradient(90deg,var(--purple),#AB47BC);border-radius:99px;transition:width .4s;}
+.qprog-text{font-size:.85rem;color:var(--muted);white-space:nowrap;}
+
+.quiz-card{background:#fff;border-radius:16px;padding:28px;box-shadow:0 2px 12px rgba(0,0,0,.07);margin-bottom:16px;}
+.quiz-num{font-size:.8rem;font-weight:700;color:var(--purple);margin-bottom:10px;text-transform:uppercase;letter-spacing:.05em;}
+.quiz-q{font-size:1.1rem;font-weight:600;color:var(--text);line-height:1.6;margin-bottom:20px;}
+.quiz-options{display:flex;flex-direction:column;gap:10px;}
+.quiz-opt{padding:13px 18px;border-radius:10px;border:2px solid var(--border);cursor:pointer;font-family:'Sarabun',sans-serif;font-size:.95rem;text-align:left;background:#fff;transition:.2s;color:var(--text);}
+.quiz-opt:hover:not(:disabled){border-color:var(--purple);background:var(--purple-light);}
+.quiz-opt.correct{border-color:var(--green);background:var(--green-light);color:var(--green);}
+.quiz-opt.wrong{border-color:var(--red);background:var(--red-light);color:var(--red);}
+.quiz-opt:disabled{cursor:default;}
+
+.quiz-explanation{margin-top:16px;padding:14px 18px;border-radius:10px;background:#FFF8E1;border-left:4px solid #FFC107;font-size:.9rem;color:#5D4037;display:none;}
+.quiz-explanation.show{display:block;}
+
+.quiz-nav{display:flex;justify-content:space-between;align-items:center;margin-top:16px;}
+.btn-quiz{border:none;border-radius:50px;padding:11px 28px;font-family:'Sarabun',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:.2s;}
+.btn-next{background:var(--purple);color:#fff;}
+.btn-next:hover{background:#4A148C;}
+.btn-next:disabled{background:#ccc;cursor:default;}
+
+.quiz-result{background:#fff;border-radius:16px;padding:36px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.1);}
+.quiz-result .big-score{font-size:3.5rem;font-weight:700;color:var(--primary-dark);}
+.quiz-result .score-sub{font-size:1rem;color:var(--muted);margin-bottom:20px;}
+.quiz-result .grade{font-size:1.4rem;font-weight:700;padding:8px 24px;border-radius:20px;display:inline-block;margin-bottom:20px;}
+.quiz-result .feedback{font-size:1rem;color:#444;max-width:480px;margin:0 auto 24px;line-height:1.8;}
+.btn-retry{background:var(--primary);color:#fff;border:none;border-radius:50px;padding:13px 36px;font-family:'Sarabun',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;}
+
+/* ── FOOTER ── */
+.app-footer{text-align:center;padding:24px;font-size:.8rem;color:#aaa;border-top:1px solid var(--border);background:#fff;margin-top:32px;}
+.app-footer a{color:var(--green);text-decoration:none;}
+
+@media(max-width:600px){
+  .field-row,.compare-grid,.result-grid,.info-grid{grid-template-columns:1fr;}
+  .total-row{flex-direction:column;}
+  .total-amount{font-size:1.6rem;}
+  .hero h1{font-size:1.3rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="app-header">
+  <div class="app-header-inner">
+    <div class="app-logo">🏥 VBP Tools <span>Value-Based Procurement Platform</span></div>
+  </div>
+</div>
+
+<!-- TAB BAR -->
+<div class="tab-bar">
+  <div class="tab-bar-inner">
+    <button class="tab-btn active" onclick="showTab('article',this)">📖 ทำความรู้จัก VBP</button>
+    <button class="tab-btn" onclick="showTab('calc',this)">🧮 คำนวณต้นทุนรวม</button>
+    <button class="tab-btn" onclick="showTab('meat',this)">⚖️ ประเมิน MEAT Score</button>
+    <button class="tab-btn" onclick="showTab('quiz',this)">🎯 ทดสอบความรู้</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- PAGE 1: ARTICLE -->
+<!-- ══════════════════════════════════════ -->
+<div class="page active" id="page-article">
+  <div class="hero">
+    <h1>เมื่อ "ราคาต่ำสุด" ไม่ใช่คำตอบอีกต่อไป</h1>
+    <p>ทำความรู้จัก Value-Based Procurement และ MEAT Framework กรอบคิดที่กำลังเปลี่ยนการจัดซื้อภาครัฐทั่วโลก</p>
+    <div class="badge-row">
+      <span class="badge">📚 MEAT VBP Framework</span>
+      <span class="badge">🇪🇺 EU Directive 2014</span>
+      <span class="badge">💊 Healthcare Procurement</span>
+      <span class="badge">⭐ 41 เกณฑ์การประเมิน</span>
+    </div>
+  </div>
+
+  <div class="card article-body">
+    <p>ผมขอพูดตรงๆ ครับว่า ความเชื่อที่ว่า <strong>"ซื้อถูกที่สุดคือดีที่สุด"</strong> คือหนึ่งในความเข้าใจผิดที่อันตรายที่สุดในการจัดซื้อจัดจ้างภาครัฐ ปัญหานี้ไม่ได้เกิดจากความโลภหรือความประมาท แต่เกิดจากระบบที่ถูกออกแบบมาให้มองเห็นแค่ "ราคาหน้าใบเสนอ" แต่ไม่ได้มองเห็น "ต้นทุนที่แท้จริง" ทั้งหมดที่ซ่อนอยู่ข้างหลังครับ</p>
+
+    <p>ลองนึกภาพแบบนี้ดูนะครับ สมมติเราต้องการจ้างช่างมาซ่อมหลังคาบ้าน มีบริษัทสองเจ้าเสนอราคา เจ้าแรก 20,000 บาท เจ้าที่สอง 35,000 บาท โดยปกติเราก็คงเลือกเจ้าแรกใช่ไหมครับ? แต่ถ้ารู้ว่าช่างเจ้าแรกใช้วัสดุคุณภาพต่ำ หลังคารั่วซ้ำภายในหนึ่งปี และค่าซ่อมครั้งที่สองตกอีก 40,000 บาท แต่เจ้าที่สองรับประกัน 10 ปี? คราวนี้ "ราคาถูก" กลับกลายเป็นต้นทุนที่แพงกว่ามากครับ</p>
+
+    <h2>Value = ผลลัพธ์ที่ดี ÷ ต้นทุนรวม</h2>
+    <p>แนวคิด <strong>การดูแลสุขภาพเชิงคุณค่า (Value-Based Healthcare)</strong> ถูกเสนอโดย Porter & Teisberg ในปี 2006 สาระสำคัญคือ "คุณค่า" = <em>ผลลัพธ์ที่ดีที่สุดสำหรับผู้ป่วย หารด้วย ต้นทุนทั้งหมดตลอดวงจรการรักษา</em></p>
+
+    <blockquote>"ถ้าเราซื้อยาราคาถูกที่ทำให้ผู้ป่วยกลับมานอนโรงพยาบาลซ้ำ ต้นทุนจริงของการรักษาคือเท่าไร? คำตอบนั้นไม่เคยอยู่ในใบเสนอราคาฉบับแรกเลยครับ"</blockquote>
+
+    <h2>MEAT VBP Framework — กรอบ 3 ชั้น 41 เกณฑ์</h2>
+    <p>ในปี 2014 สหภาพยุโรปออกกฎหมายกำหนดให้หน่วยงานรัฐต้องใช้หลักการ <strong>MEAT (Most Economically Advantageous Tender)</strong> ซึ่งต้องพิจารณาคุณค่าองค์รวม ไม่ใช่แค่ราคาครับ</p>
+
+    <div class="info-grid">
+      <div class="info-card red">
+        <h3>🔴 ชั้น 1: ต้นทุนรวม</h3>
+        <p>ราคาซื้อ + บำรุงรักษา + จัดเก็บ + ทำลาย + บุคลากร = 17 เกณฑ์</p>
+      </div>
+      <div class="info-card blue">
+        <h3>🔵 ชั้น 2: ผลลัพธ์</h3>
+        <p>หลักฐานคลินิก + คุณภาพข้อมูล + การวัดผล + Risk Sharing = 4 เกณฑ์</p>
+      </div>
+      <div class="info-card green">
+        <h3>🟢 ชั้น 3: ประโยชน์ผู้เกี่ยวข้อง</h3>
+        <p>ผู้ป่วย + บุคลากร + โรงพยาบาล + ระบบสาธารณสุข = 13 เกณฑ์</p>
+      </div>
+      <div class="info-card purple">
+        <h3>🟣 ชั้น 4: ผลต่อสังคม</h3>
+        <p>นวัตกรรม + ความยั่งยืน + ผลกระทบสังคม-เศรษฐกิจ = 7 เกณฑ์</p>
+      </div>
+    </div>
+
+    <h2>ความสำคัญต่อภาครัฐไทย</h2>
+    <p>การเปลี่ยนวิธีคิดจาก "ราคาต่ำสุด" มาเป็น "คุณค่าสูงสุด" ไม่ได้แปลว่าเราต้องใช้เงินมากขึ้น แต่แปลว่าเราใช้เงินเดิมให้เกิดประโยชน์มากขึ้นต่างหากครับ งานวิจัยใน Health Economics Review (2021) นำ MEAT VBP Framework ไปใช้กับถุงมือผ่าตัดและพบเกณฑ์ประเมิน 18 ข้อที่ซ่อนอยู่เบื้องหลังสินค้า "ธรรมดา" ชิ้นนั้น</p>
+
+    <blockquote>"VBP ไม่ได้เปลี่ยนงบประมาณที่มี แต่มันเปลี่ยนคำถามที่เราถามก่อนใช้เงินงบประมาณนั้นครับ"</blockquote>
+
+    <p>บทบาทสำคัญของผู้กำกับดูแลการจัดซื้อสาธารณะคือการสร้างกรอบที่เปิดให้มีการพิจารณา "คุณค่า" ควบคู่กับ "ราคา" ได้อย่างโปร่งใสและตรวจสอบได้ และนี่คือคำถามที่ผมอยากฝากให้เราช่วยกันคิดครับ: <strong>ถ้าวันนี้เราเริ่มวัด "คุณค่า" ในการจัดซื้อของรัฐได้จริง ระบบสาธารณสุขไทยในอีก 10 ปีข้างหน้าจะเปลี่ยนไปอย่างไร?</strong></p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- PAGE 2: DRUG COST CALCULATOR -->
+<!-- ══════════════════════════════════════ -->
+<div class="page" id="page-calc">
+  <div class="card" style="margin-bottom:0;border-radius:16px 16px 0 0;background:linear-gradient(135deg,#1565C0,#0D47A1);color:#fff;">
+    <h2 style="color:#fff;font-size:1.2rem;">💊 เครื่องคำนวณต้นทุนรวมของยาต่อผู้ป่วย (Drug True Cost Calculator)</h2>
+    <p style="opacity:.85;font-size:.9rem;">คำนวณต้นทุนที่แท้จริงของยา — ครอบคลุมการจัดซื้อ, การบริหารยา, การติดตามผล, ผลข้างเคียง และความล้มเหลว ไม่ใช่แค่ราคายา</p>
+  </div>
+
+  <div style="background:#fff;border-radius:0 0 16px 16px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,.06);margin-bottom:24px;">
+
+    <!-- SECTION 1: Drug & Patient Info -->
+    <div class="calc-section">
+      <h3 class="red">🔴 ข้อมูลยาและผู้ป่วย (Drug & Patient Parameters)</h3>
+      <div class="calc-fields">
+        <div class="field-row">
+          <div class="field-group">
+            <label>ชื่อยา / ชื่อทางการค้า</label>
+            <input type="text" id="d_name" placeholder="เช่น Drug A" oninput="calcDrug()"/>
+          </div>
+          <div class="field-group">
+            <label>จำนวนผู้ป่วยที่ใช้ยานี้ต่อปี</label>
+            <input type="number" id="d_patients" placeholder="เช่น 100" oninput="calcDrug()"/>
+            <span class="unit">ราย/ปี</span>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label>ราคายาต่อหน่วย (เม็ด / ไวแอล / ซอง)</label>
+            <input type="number" id="d_unitprice" placeholder="เช่น 50" oninput="calcDrug()"/>
+            <span class="unit">บาท/หน่วย</span>
+          </div>
+          <div class="field-group">
+            <label>จำนวนหน่วยที่ใช้ต่อวัน (Dose/Day)</label>
+            <input type="number" id="d_doseday" placeholder="เช่น 2" oninput="calcDrug()"/>
+            <span class="unit">หน่วย/วัน</span>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label>ระยะเวลาการรักษาต่อคอร์ส</label>
+            <input type="number" id="d_days" placeholder="เช่น 30" oninput="calcDrug()"/>
+            <span class="unit">วัน/คอร์ส</span>
+          </div>
+          <div class="field-group">
+            <label>จำนวนคอร์สการรักษาต่อผู้ป่วย/ปี</label>
+            <input type="number" id="d_courses" placeholder="เช่น 1" value="1" oninput="calcDrug()"/>
+            <span class="unit">คอร์ส/ปี</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 2: Administration Costs -->
+    <div class="calc-section">
+      <h3 class="blue">🔵 ต้นทุนการบริหารยาและจัดการ (Administration & Dispensing Costs)</h3>
+      <div class="calc-fields">
+        <div class="field-row">
+          <div class="field-group">
+            <label>เวลาเภสัชกรในการจัดยาต่อคอร์ส</label>
+            <input type="number" id="d_pharmtime" placeholder="เช่น 10" oninput="calcDrug()"/>
+            <span class="unit">นาที/คอร์ส</span>
+          </div>
+          <div class="field-group">
+            <label>ค่าแรงเภสัชกร</label>
+            <input type="number" id="d_pharmwage" placeholder="เช่น 400" value="400" oninput="calcDrug()"/>
+            <span class="unit">บาท/ชั่วโมง</span>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label>เวลาพยาบาล/บุคลากรในการบริหารยาต่อคอร์ส</label>
+            <input type="number" id="d_nursetime" placeholder="เช่น 15" oninput="calcDrug()"/>
+            <span class="unit">นาที/คอร์ส</span>
+          </div>
+          <div class="field-group">
+            <label>ค่าแรงพยาบาล/บุคลากร</label>
+            <input type="number" id="d_nursewage" placeholder="เช่น 300" value="300" oninput="calcDrug()"/>
+            <span class="unit">บาท/ชั่วโมง</span>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label>ค่าวัสดุสิ้นเปลืองในการบริหารยา</label>
+            <input type="number" id="d_supplies" placeholder="เช่น 20" oninput="calcDrug()"/>
+            <span class="unit">บาท/คอร์ส (เข็ม, IV set ฯลฯ)</span>
+          </div>
+          <div class="field-group">
+            <label>ค่าจัดเก็บพิเศษ (cold chain ฯลฯ)</label>
+            <input type="number" id="d_storage" placeholder="เช่น 5" oninput="calcDrug()"/>
+            <span class="unit">บาท/คอร์ส</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: Monitoring Costs -->
+    <div class="calc-section">
+      <h3 class="green">🟢 ต้นทุนการติดตามผลการรักษา (Monitoring Costs)</h3>
+      <div class="calc-fields">
+        <div class="field-row">
+          <div class="field-group">
+            <label>จำนวน Lab tests ที่ต้องทำต่อคอร์ส</label>
+            <input type="number" id="d_labn" placeholder="เช่น 2" oninput="calcDrug()"/>
+            <span class="unit">ครั้ง/คอร์ส</span>
+          </div>
+          <div class="field-group">
+            <label>ค่า Lab เฉลี่ยต่อครั้ง</label>
+            <input type="number" id="d_labcost" placeholder="เช่น 300" oninput="calcDrug()"/>
+            <span class="unit">บาท/ครั้ง</span>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label>จำนวน Follow-up OPD visit ต่อคอร์ส</label>
+            <input type="number" id="d_visitn" placeholder="เช่น 1" oninput="calcDrug()"/>
+            <span class="unit">ครั้ง/คอร์ส</span>
+          </div>
+          <div class="field-group">
+            <label>ค่า OPD visit ต่อครั้ง</label>
+            <input type="number" id="d_visitcost" placeholder="เช่น 200" oninput="calcDrug()"/>
+            <span class="unit">บาท/ครั้ง</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 4: ADR & Failure Costs -->
+    <div class="calc-section">
+      <h3 style="background:var(--purple);">🟣 ต้นทุนผลข้างเคียงและความล้มเหลว (ADR & Treatment Failure)</h3>
+      <div class="calc-fields">
+        <div class="field-row">
+          <div class="field-group">
+            <label>อัตราการเกิดผลข้างเคียงที่ต้องรักษา (ADR Rate)</label>
+            <input type="number" id="d_adrrate" placeholder="เช่น 10" oninput="calcDrug()"/>
+            <span class="unit">% ของผู้ป่วย</span>
+          </div>
+          <div class="field-group">
+            <label>ค่าใช้จ่ายในการรักษา ADR ต่อ episode</label>
+            <input type="number" id="d_adrcost" placeholder="เช่น 2000" oninput="calcDrug()"/>
+            <span class="unit">บาท/ราย</span>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label>อัตราการ Admit จากภาวะแทรกซ้อน</label>
+            <input type="number" id="d_admitrate" placeholder="เช่น 3" oninput="calcDrug()"/>
+            <span class="unit">% ของผู้ป่วย</span>
+          </div>
+          <div class="field-group">
+            <label>ค่าใช้จ่ายต่อการ Admit (Hospitalization)</label>
+            <input type="number" id="d_admitcost" placeholder="เช่น 15000" oninput="calcDrug()"/>
+            <span class="unit">บาท/ครั้ง</span>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label>อัตราการรักษาล้มเหลว / ไม่ตอบสนอง (Failure Rate)</label>
+            <input type="number" id="d_failrate" placeholder="เช่น 15" oninput="calcDrug()"/>
+            <span class="unit">% ของผู้ป่วย</span>
+          </div>
+          <div class="field-group">
+            <label>ค่าใช้จ่ายในการปรับแผนรักษา (Switch to 2nd line)</label>
+            <input type="number" id="d_failcost" placeholder="เช่น 5000" oninput="calcDrug()"/>
+            <span class="unit">บาท/ราย</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="drugResultPanel" style="display:none;margin-top:16px;">
+      <div style="background:linear-gradient(135deg,#0D47A1,#1565C0);border-radius:16px;padding:24px;color:#fff;margin-bottom:16px;">
+        <div style="font-size:.9rem;opacity:.75;margin-bottom:6px;">ต้นทุนรวมที่แท้จริงต่อผู้ป่วย 1 ราย (True Cost per Patient)</div>
+        <div style="font-size:2.4rem;font-weight:700;" id="dTotalPerPt">฿0</div>
+        <div style="font-size:.85rem;opacity:.7;margin-top:4px;" id="dSubtitle">เทียบกับราคายาเพียงอย่างเดียว</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px;">
+        <div style="background:var(--red-light);border-radius:12px;padding:16px;">
+          <div style="font-size:.8rem;color:var(--red);font-weight:700;">💊 ต้นทุนยา</div>
+          <div style="font-size:1.4rem;font-weight:700;color:var(--red);" id="dDrugCost">฿0</div>
+          <div style="font-size:.75rem;color:#888;" id="dDrugPct">0% ของต้นทุนรวม</div>
+        </div>
+        <div style="background:var(--primary-light);border-radius:12px;padding:16px;">
+          <div style="font-size:.8rem;color:var(--primary);font-weight:700;">🏥 ต้นทุนการบริหารและติดตาม</div>
+          <div style="font-size:1.4rem;font-weight:700;color:var(--primary);" id="dAdminCost">฿0</div>
+          <div style="font-size:.75rem;color:#888;" id="dAdminPct">0% ของต้นทุนรวม</div>
+        </div>
+        <div style="background:var(--purple-light);border-radius:12px;padding:16px;">
+          <div style="font-size:.8rem;color:var(--purple);font-weight:700;">⚠️ ต้นทุน ADR + ภาวะแทรกซ้อน</div>
+          <div style="font-size:1.4rem;font-weight:700;color:var(--purple);" id="dAdrCost">฿0</div>
+          <div style="font-size:.75rem;color:#888;" id="dAdrPct">0% ของต้นทุนรวม</div>
+        </div>
+        <div style="background:var(--orange-light);border-radius:12px;padding:16px;">
+          <div style="font-size:.8rem;color:var(--orange);font-weight:700;">❌ ต้นทุนความล้มเหลว</div>
+          <div style="font-size:1.4rem;font-weight:700;color:var(--orange);" id="dFailCost">฿0</div>
+          <div style="font-size:.75rem;color:#888;" id="dFailPct">0% ของต้นทุนรวม</div>
+        </div>
+      </div>
+      <div style="background:#E8F5E9;border-radius:12px;padding:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <div>
+          <div style="font-size:.85rem;color:var(--green);font-weight:700;">📊 ต้นทุนรวมทั้งปี (จำนวนผู้ป่วยทั้งหมด)</div>
+          <div style="font-size:1.6rem;font-weight:700;color:var(--green);" id="dAnnualTotal">฿0</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:.85rem;color:var(--green);font-weight:700;">🎯 ต้นทุนต่อผู้ป่วยที่รักษาสำเร็จ</div>
+          <div style="font-size:1.6rem;font-weight:700;color:var(--green);" id="dCostPerSuccess">฿0</div>
+        </div>
+      </div>
+      <div style="margin-top:12px;padding:12px 16px;background:#FFF8E1;border-radius:10px;font-size:.85rem;color:#5D4037;" id="dInsight"></div>
+    </div>
+
+    <div style="margin-top:20px;">
+      <button class="btn-calc" onclick="calcDrug()">💊 คำนวณต้นทุนจริง</button>
+      <button class="btn-reset-calc" onclick="resetDrug()">รีเซ็ต</button>
+    </div>
+  </div>
+
+  <!-- DRUG COMPARISON -->
+  <div class="card">
+    <div class="card-title">⚖️ เปรียบเทียบยา 2 ตัว (Drug A vs Drug B)</div>
+    <p style="font-size:.9rem;color:var(--muted);margin-bottom:16px;">กรอกต้นทุนรวมต่อผู้ป่วยและอัตราความสำเร็จของยาแต่ละตัว เพื่อดูว่าตัวไหน "คุ้มค่า" กว่า</p>
+    <div class="compare-grid">
+      <div class="compare-card">
+        <h4>💊 ยา A</h4>
+        <input type="text" id="nameA" placeholder="ชื่อยา A เช่น Brand X"/>
+        <input type="number" id="tcoA" placeholder="ต้นทุนรวม/ผู้ป่วย (บาท)" oninput="compareCalc()"/>
+        <input type="number" id="scoreA" placeholder="อัตราความสำเร็จในการรักษา (%)" oninput="compareCalc()"/>
+      </div>
+      <div class="compare-card">
+        <h4>💊 ยา B</h4>
+        <input type="text" id="nameB" placeholder="ชื่อยา B เช่น Generic Y"/>
+        <input type="number" id="tcoB" placeholder="ต้นทุนรวม/ผู้ป่วย (บาท)" oninput="compareCalc()"/>
+        <input type="number" id="scoreB" placeholder="อัตราความสำเร็จในการรักษา (%)" oninput="compareCalc()"/>
+      </div>
+    </div>
+    <div class="compare-result" id="compareResult" style="display:none;">
+      <div class="winner" id="compWinner"></div>
+      <div class="saving" id="compSaving"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- PAGE 3: MEAT ASSESSMENT -->
+<!-- ══════════════════════════════════════ -->
+<div class="page" id="page-meat">
+  <div class="meat-intro">
+    <h2>⚖️ MEAT VBP Score Assessment</h2>
+    <p>ให้คะแนน 1-5 ดาว แต่ละเกณฑ์ตาม MEAT Framework — ระบบจะคำนวณคะแนนรวมให้อัตโนมัติ</p>
+  </div>
+
+  <div class="meat-progress-wrap">
+    <div class="meat-progress-top">
+      <div>
+        <div style="font-size:.85rem;color:var(--muted);">คะแนน MEAT รวม</div>
+        <div class="meat-score-display" id="meatTotalScore">0</div>
+        <div class="meat-score-label">จาก 100 คะแนน</div>
+      </div>
+      <div style="flex:1;margin-left:24px;">
+        <div class="meat-bar-bg"><div class="meat-bar-fill" id="meatBar" style="width:0%"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted);margin-top:4px;">
+          <span>0</span><span>25</span><span>50</span><span>75</span><span>100</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Layer 1: Costs -->
+  <div class="criteria-section">
+    <div class="criteria-header red" onclick="toggleSection(this)">
+      <span>🔴 ชั้น 1: ต้นทุนรวม (Costs)</span>
+      <span style="font-size:.8rem;opacity:.85;margin-left:8px;">น้ำหนัก 35%</span>
+      <span class="toggle">▼</span>
+    </div>
+    <div class="criteria-body" id="sec-cost">
+      <div class="criteria-row">
+        <div><div class="criteria-label">ราคาซื้อ / เช่า ผลิตภัณฑ์</div><div class="criteria-sub">Purchasing price — เปรียบเทียบกับทางเลือกอื่น</div></div>
+        <div><div class="star-rating" data-key="cost1" data-weight="35"></div></div>
+      </div>
+      <div class="criteria-row">
+        <div><div class="criteria-label">ต้นทุนการส่งมอบและติดตั้ง</div><div class="criteria-sub">Delivery & installation</div></div>
+        <div><div class="star-rating" data-key="cost2" data-weight="35"></div></div>
+      </div>
+      <div class="criteria-row">
+        <div><div class="criteria-label">ค่าฝึกอบรมบุคลากรสำหรับผลิตภัณฑ์ใหม่</div><div class="criteria-sub">Staff conversion training</div></div>
+        <div><div class="star-rating" data-key="cost3" data-weight="35"></div></div>
+      </div>
+      <div class="criteria-row">
+        <div><div class="criteria-label">ต้นทุนบำรุงรักษาและซ่อมแซม</div><div class="criteria-sub">Spare parts + service contract</div></div>
+        <div><div class="star-rating" data-key="cost4" data-weight="35"></div></div>
+      </div>
+      <div class="criteria-row">
+        <div><div class="criteria-label">ต้นทุนการจัดเก็บและการกำจัด</div><div class="criteria-sub">Storage room + disposal / decommissioning</div></div>
+        <div><div class="star-rating" data-key="cost5" data-weight="35"></div></div>
+      </div>
+      <div class="criteria-row">
+        <div><div class="criteria-label">เวลาบุคลากรทางการแพทย์ในการใช้งาน</div><div class="criteria-sub">Medical staff time using device</div></div>
+        <div><div class="star-rating" data-key="cost6" data-weight="35"></div></div>
+      </div>
+      <div class="criteria-row">
+        <div><div class="criteria-label">อัตราความผิดพลาดและต้นทุนที่ไม่ได้วางแผน</div><div class="criteria-sub">Unplanned usage — failure rate</div></div>
+        <div><div class="star-rating" data-key="cost7" data-weight="35"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Layer 2: Outcomes -->
+  <div class="criteria-section">
+    <div class="criteria-header blue" onclick="toggleSection(this)">
+      <span>🔵 ชั้น 2: ผลลัพธ์การรักษา (Outcomes)</span>
+      <span style="font-size:.8rem;opacity:.85;margin-left:8px;">น้ำหนัก 30%</span>
+      <span class="toggle">▼</span>
+    </div>
+    <div class="criteria-body" id="sec-outcomes">
+      <div class="criteria-row">
+        <div><div class="criteria-label">หลักฐานทางคลินิกว่าปรับปรุงผลลัพธ์ผู้ป่วย</div><div class="criteria-sub">Evidence of relevant outcomes improvement</div></div>
+        <div><div class="star-rating" data-key="out1" data-weight="30"></div></div>
+      </div>
+      <div class="criteria-row">
+        <div><div class="criteria-label">คุณภาพและความน่าเชื่อถือของข้อมูลผลลัพธ์</div><div class="criteria-sub">Existence of high quality outcomes data</div></div>
+        <div><div class="star-rating" data-key="out2" data-weight="30"></div></div>
+      </div>
+      <div class="criteria-row">
+        <div><div class="criteria-label">การสนับสนุนการวัดและรายงานผลลัพธ์ระยะยาว</div><div class="criteria-sub">Support in measuring and reporting on outcomes</div></div>
+        <div><div class="star-rating" data-key="out3" data-weight="30"></div></div>
+      </div>
+      <div class="criteria-row">
+        <div><div class="criteria-label">ความยินดีร่วมรับผิดชอบหากผลลัพธ์ไม่ได้ตามเป้า</div><div class="criteria-sub">Willingness to offer outcomes-dependent risk sharing</div></div>
+        <div><div class="star-rating" data-key="out4" data-weight="30"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Layer 3: Stakeholder Benefits -->
+  <div class="criteria-section">
+    <div class="criteria-header green" onclick="toggleSection(this)">
+      <span>🟢 ชั้น 3: ประโยชน์ผู้เกี่ยวข้อง (Stakeholder Benefits)</span>
+      <span style="font-size:.8rem;opacity:.85;margin-left:8px;">น้ำหนัก 25%</span>
+      <span class="toggle">▼</span>
+    </div>
+    <div class="criteria-body" id="sec-stake">
+      <div class="criteria-row">
+        <div><div class="criteria-label">ความสะดวกสบายและการเคลื่อนไหวของผู้ป่วย</div><div class="criteria-sub">Patient comfort, convenience and mobility</div></div>
+        <div><div class="star-rating" data-key="st1" data-weight="25"></div></div>
+      </div>
+      <div class="criteria-row">
+        <div><div class="criteria-label">ผู้ป่วยปฏิบัติตามแผนการรักษาได้ดีขึ้น</div><div class="criteria-sub">Impact on treatment adherence</div></div>
+        <div><div class="star-rating" data-key="st2" data-weight="25"></div></div>
+      </div>
+      <div class="criteria-row">
+        <div><div class="criteria-label">ความปลอดภัยของบุคลากรในการใช้งาน</div><div class="criteria-sub">Secure usage for care providers</div></div>
+        <div><div class="star-rating" data-key="st3" data-weight="25"></div></div>
+      </div>
+      <div class="criteria-row">
+        <div><div class="criteria-label">ใช้งานง่าย มีการอบรมที่เพียงพอ</div><div class="criteria-sub">Ease-of-use + training and access to education</div></div>
+        <div><div class="star-rating" data-key="st4" data-weight="25"></div></div>
+      </div>
+      <div class="criteria-row">
+        <div><div class="criteria-label">ช่วยเพิ่มประสิทธิภาพการดูแลผู้ป่วยในโรงพยาบาล</div><div class="criteria-sub">Support improving efficiency along patient pathway</div></div>
+        <div><div class="star-rating" data-key="st5" data-weight="25"></div></div>
+      </div>
+      <div class="criteria-row">
+        <div><div class="criteria-label">ลดต้นทุนการรักษาระยะยาวของระบบ</div><div class="criteria-sub">Reduced long-term costs of treatment</div></div>
+        <div><div class="star-rating" data-key="st6" data-weight="25"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Layer 4: Society -->
+  <div class="criteria-section">
+    <div class="criteria-header purple" onclick="toggleSection(this)">
+      <span>🟣 ชั้น 4: ผลกระทบต่อสังคม (Societal Impact)</span>
+      <span style="font-size:.8rem;opacity:.85;margin-left:8px;">น้ำหนัก 10%</span>
+      <span class="toggle">▼</span>
+    </div>
+    <div class="criteria-body" id="sec-society">
+      <div class="criteria-row">
+        <div><div class="criteria-label">ส่งเสริมการพัฒนาเทคโนโลยีและนวัตกรรมใหม่</div><div class="criteria-sub">Development of new and substantially improved technology</div></div>
+        <div><div class="star-rating" data-key="so1" data-weight="10"></div></div>
+      </div>
+      <div class="criteria-row">
+        <div><div class="criteria-label">ผลกระทบต่อสิ่งแวดล้อม</div><div class="criteria-sub">Environmental impact</div></div>
+        <div><div class="star-rating" data-key="so2" data-weight="10"></div></div>
+      </div>
+      <div class="criteria-row">
+        <div><div class="criteria-label">ห่วงโซ่อุปทานที่รับผิดชอบต่อสังคม</div><div class="criteria-sub">Socially responsible product value chain</div></div>
+        <div><div class="star-rating" data-key="so3" data-weight="10"></div></div>
+      </div>
+      <div class="criteria-row">
+        <div><div class="criteria-label">ผลกระทบเชิงเศรษฐกิจและสังคมโดยรวม</div><div class="criteria-sub">Socio-economic impact</div></div>
+        <div><div class="star-rating" data-key="so4" data-weight="10"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:12px;margin-top:8px;">
+    <button class="btn-meat" onclick="showMeatResult()">📊 ดูผลการประเมิน</button>
+    <button class="btn-meat-reset" onclick="resetMeat()">รีเซ็ต</button>
+  </div>
+
+  <div class="meat-result" id="meatResult" style="display:none;margin-top:24px;">
+    <h3>📊 ผลการประเมิน MEAT VBP Score</h3>
+    <div class="result-grid">
+      <div class="result-item red"><div class="r-score" id="r_cost">—</div><div class="r-label">ต้นทุนรวม (35%)</div></div>
+      <div class="result-item blue"><div class="r-score" id="r_out">—</div><div class="r-label">ผลลัพธ์ (30%)</div></div>
+      <div class="result-item green"><div class="r-score" id="r_st">—</div><div class="r-label">ประโยชน์ผู้เกี่ยวข้อง (25%)</div></div>
+      <div class="result-item purple"><div class="r-score" id="r_so">—</div><div class="r-label">ผลต่อสังคม (10%)</div></div>
+    </div>
+    <div class="overall-score">
+      <div class="big" id="r_total">—</div>
+      <div class="lbl">คะแนน MEAT รวม (จาก 100)</div>
+      <div><span class="verdict" id="r_verdict">—</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- PAGE 4: QUIZ -->
+<!-- ══════════════════════════════════════ -->
+<div class="page" id="page-quiz">
+  <div class="quiz-header">
+    <h2>🎯 ทดสอบความรู้ Value-Based Procurement</h2>
+    <p>10 คำถาม — ทดสอบความเข้าใจเรื่อง VBP และ MEAT Framework</p>
+  </div>
+
+  <div class="quiz-progress">
+    <div class="qprog-bar"><div class="qprog-fill" id="qBar" style="width:0%"></div></div>
+    <div class="qprog-text" id="qProgText">ข้อ 0 / 10</div>
+    <div style="font-size:.85rem;color:var(--muted);" id="qScore">คะแนน: 0</div>
+  </div>
+
+  <div id="quizContainer"></div>
+  <div id="quizResultContainer" style="display:none;">
+    <div class="quiz-result">
+      <div class="big-score" id="qFinalScore"></div>
+      <div class="score-sub" id="qFinalSub"></div>
+      <div class="grade" id="qGrade"></div>
+      <div class="feedback" id="qFeedback"></div>
+      <button class="btn-retry" onclick="startQuiz()">🔄 ทำใหม่อีกครั้ง</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="app-footer">
+  ออกแบบโดย <a href="http://www.pharmconnection.net" target="_blank">เภสัชกรวิรุณ เวชศิริ | www.pharmconnection.net</a>
+</div>
+
+<script>
+// ══════════════════════════
+// TAB NAVIGATION
+// ══════════════════════════
+function showTab(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ══════════════════════════
+// DRUG COST CALCULATOR
+// ══════════════════════════
+function calcDrug() {
+  const patients   = +document.getElementById('d_patients').value || 0;
+  const unitprice  = +document.getElementById('d_unitprice').value || 0;
+  const doseday    = +document.getElementById('d_doseday').value || 0;
+  const days       = +document.getElementById('d_days').value || 0;
+  const courses    = +document.getElementById('d_courses').value || 1;
+
+  const pharmtime  = +document.getElementById('d_pharmtime').value || 0;
+  const pharmwage  = +document.getElementById('d_pharmwage').value || 400;
+  const nursetime  = +document.getElementById('d_nursetime').value || 0;
+  const nursewage  = +document.getElementById('d_nursewage').value || 300;
+  const supplies   = +document.getElementById('d_supplies').value || 0;
+  const storage    = +document.getElementById('d_storage').value || 0;
+
+  const labn       = +document.getElementById('d_labn').value || 0;
+  const labcost    = +document.getElementById('d_labcost').value || 0;
+  const visitn     = +document.getElementById('d_visitn').value || 0;
+  const visitcost  = +document.getElementById('d_visitcost').value || 0;
+
+  const adrrate    = (+document.getElementById('d_adrrate').value || 0) / 100;
+  const adrcost    = +document.getElementById('d_adrcost').value || 0;
+  const admitrate  = (+document.getElementById('d_admitrate').value || 0) / 100;
+  const admitcost  = +document.getElementById('d_admitcost').value || 0;
+  const failrate   = (+document.getElementById('d_failrate').value || 0) / 100;
+  const failcost   = +document.getElementById('d_failcost').value || 0;
+
+  if (!unitprice && !pharmtime && !labn && !adrrate) {
+    document.getElementById('drugResultPanel').style.display = 'none';
+    return;
+  }
+
+  // Cost per course
+  const drugCostPerCourse   = unitprice * doseday * days;
+  const pharmCostPerCourse  = (pharmtime / 60) * pharmwage;
+  const nurseCostPerCourse  = (nursetime / 60) * nursewage;
+  const adminCostPerCourse  = pharmCostPerCourse + nurseCostPerCourse + supplies + storage;
+  const monitorCostPerCourse= (labn * labcost) + (visitn * visitcost);
+
+  // Cost per patient (all courses)
+  const drugPerPt    = drugCostPerCourse * courses;
+  const adminPerPt   = (adminCostPerCourse + monitorCostPerCourse) * courses;
+  const adrPerPt     = (adrrate * adrcost) + (admitrate * admitcost);
+  const failPerPt    = failrate * failcost;
+  const totalPerPt   = drugPerPt + adminPerPt + adrPerPt + failPerPt;
+
+  // Annual totals
+  const annualTotal  = totalPerPt * patients;
+  const successRate  = Math.max(0, 1 - failrate - adrrate * 0.5);
+  const costPerSuccess = successRate > 0 ? totalPerPt / successRate : 0;
+
+  // Percentages
+  const pct = v => totalPerPt > 0 ? ((v/totalPerPt)*100).toFixed(1)+'%' : '0%';
+  const fmt = v => '฿' + v.toLocaleString('th-TH', {maximumFractionDigits:0});
+  const drugName = document.getElementById('d_name').value || 'ยานี้';
+
+  // Display
+  document.getElementById('drugResultPanel').style.display = 'block';
+  document.getElementById('dTotalPerPt').textContent = fmt(totalPerPt);
+  document.getElementById('dSubtitle').textContent =
+    `ราคายาคิดเป็น ${pct(drugPerPt)} ของต้นทุนรวม — ส่วนที่เหลือ ${pct(totalPerPt - drugPerPt)} เป็นต้นทุนแฝง`;
+
+  document.getElementById('dDrugCost').textContent  = fmt(drugPerPt);
+  document.getElementById('dDrugPct').textContent   = pct(drugPerPt) + ' ของต้นทุนรวม';
+  document.getElementById('dAdminCost').textContent = fmt(adminPerPt);
+  document.getElementById('dAdminPct').textContent  = pct(adminPerPt) + ' ของต้นทุนรวม';
+  document.getElementById('dAdrCost').textContent   = fmt(adrPerPt);
+  document.getElementById('dAdrPct').textContent    = pct(adrPerPt) + ' ของต้นทุนรวม';
+  document.getElementById('dFailCost').textContent  = fmt(failPerPt);
+  document.getElementById('dFailPct').textContent   = pct(failPerPt) + ' ของต้นทุนรวม';
+
+  document.getElementById('dAnnualTotal').textContent = fmt(annualTotal);
+  document.getElementById('dCostPerSuccess').textContent = costPerSuccess > 0 ? fmt(costPerSuccess) : 'N/A';
+
+  const hidden = totalPerPt - drugPerPt;
+  const hiddenPct = totalPerPt > 0 ? ((hidden/totalPerPt)*100).toFixed(0) : 0;
+  document.getElementById('dInsight').innerHTML =
+    `💡 <strong>Insight:</strong> ${drugName} มีต้นทุนแฝงที่ซ่อนอยู่ถึง ${hiddenPct}% ของต้นทุนจริงทั้งหมด
+     ถ้าพิจารณาแค่ราคายา จะมองเห็นต้นทุนเพียง ฿${fmt(drugPerPt).replace('฿','')} แต่ต้นทุนจริงต่อผู้ป่วยคือ ${fmt(totalPerPt)}
+     ${patients > 0 ? `สำหรับผู้ป่วย ${patients} ราย ต้นทุนที่ "ซ่อน" อยู่รวมทั้งปีคือ ${fmt(hidden * patients)}` : ''}`;
+}
+
+function resetDrug() {
+  ['d_name','d_patients','d_unitprice','d_doseday','d_days',
+   'd_pharmtime','d_nursetime','d_supplies','d_storage',
+   'd_labn','d_labcost','d_visitn','d_visitcost',
+   'd_adrrate','d_adrcost','d_admitrate','d_admitcost',
+   'd_failrate','d_failcost'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('d_courses').value = '1';
+  document.getElementById('d_pharmwage').value = '400';
+  document.getElementById('d_nursewage').value = '300';
+  document.getElementById('drugResultPanel').style.display = 'none';
+}
+
+function compareCalc() {
+  const tcoA   = +document.getElementById('tcoA').value || 0;
+  const tcoB   = +document.getElementById('tcoB').value || 0;
+  const scoreA = +document.getElementById('scoreA').value || 0;
+  const scoreB = +document.getElementById('scoreB').value || 0;
+  const nameA  = document.getElementById('nameA').value || 'ยา A';
+  const nameB  = document.getElementById('nameB').value || 'ยา B';
+  const res    = document.getElementById('compareResult');
+
+  if (!tcoA || !tcoB) { res.style.display = 'none'; return; }
+
+  // Cost per successfully treated patient
+  const cpsA = scoreA > 0 ? tcoA / (scoreA / 100) : tcoA;
+  const cpsB = scoreB > 0 ? tcoB / (scoreB / 100) : tcoB;
+
+  const winner = cpsA <= cpsB ? nameA : nameB;
+  const loser  = cpsA <= cpsB ? nameB : nameA;
+  const diff   = Math.abs(tcoA - tcoB);
+  const cpsDiff= Math.abs(cpsA - cpsB);
+
+  res.style.display = 'block';
+  document.getElementById('compWinner').textContent =
+    `🏆 ${winner} คุ้มค่ากว่า — ต้นทุนต่อผู้ป่วยที่รักษาสำเร็จต่ำกว่า`;
+  document.getElementById('compSaving').textContent =
+    `ต้นทุนรวมต่างกัน ฿${diff.toLocaleString('th-TH',{maximumFractionDigits:0})}/ผู้ป่วย | ` +
+    (scoreA && scoreB
+      ? `ต้นทุนต่อผู้ป่วยที่รักษาสำเร็จต่างกัน ฿${cpsDiff.toLocaleString('th-TH',{maximumFractionDigits:0})}`
+      : `${loser} แพงกว่า ${((diff/Math.min(tcoA,tcoB))*100).toFixed(1)}%`);
+}
+
+// ══════════════════════════
+// STAR RATINGS (MEAT)
+// ══════════════════════════
+const meatScores = {};
+const sectionWeights = {
+  cost: {keys:['cost1','cost2','cost3','cost4','cost5','cost6','cost7'], w:35},
+  out:  {keys:['out1','out2','out3','out4'], w:30},
+  st:   {keys:['st1','st2','st3','st4','st5','st6'], w:25},
+  so:   {keys:['so1','so2','so3','so4'], w:10},
+};
+
+function buildStars() {
+  document.querySelectorAll('.star-rating').forEach(container => {
+    const key = container.dataset.key;
+    meatScores[key] = 0;
+    container.innerHTML = '';
+    for (let i = 1; i <= 5; i++) {
+      const btn = document.createElement('button');
+      btn.className = 'star-btn';
+      btn.innerHTML = '★';
+      btn.dataset.val = i;
+      btn.addEventListener('click', () => setStars(container, key, i));
+      container.appendChild(btn);
+    }
+    const tag = document.createElement('span');
+    tag.className = 'score-tag';
+    tag.id = 'tag-'+key;
+    tag.textContent = '0/5';
+    container.appendChild(tag);
+  });
+}
+
+function setStars(container, key, val) {
+  meatScores[key] = val;
+  container.querySelectorAll('.star-btn').forEach(b => {
+    b.classList.toggle('active', +b.dataset.val <= val);
+  });
+  document.getElementById('tag-'+key).textContent = val+'/5';
+  updateMeatTotal();
+}
+
+function updateMeatTotal() {
+  let total = 0;
+  for (const sec of Object.values(sectionWeights)) {
+    const scores = sec.keys.map(k => meatScores[k] || 0);
+    const avg = scores.reduce((a,b)=>a+b,0) / scores.length;
+    total += (avg / 5) * sec.w;
+  }
+  const pct = Math.round(total);
+  document.getElementById('meatTotalScore').textContent = pct;
+  document.getElementById('meatBar').style.width = pct + '%';
+}
+
+function showMeatResult() {
+  const results = {};
+  for (const [sec, data] of Object.entries(sectionWeights)) {
+    const scores = data.keys.map(k => meatScores[k] || 0);
+    const avg = scores.reduce((a,b)=>a+b,0) / scores.length;
+    results[sec] = { avg, weighted: (avg/5)*data.w };
+  }
+  const total = Object.values(results).reduce((s,r)=>s+r.weighted, 0);
+  const pct = Math.round(total);
+
+  document.getElementById('r_cost').textContent = results.cost.avg.toFixed(1) + '/5';
+  document.getElementById('r_out').textContent  = results.out.avg.toFixed(1)  + '/5';
+  document.getElementById('r_st').textContent   = results.st.avg.toFixed(1)   + '/5';
+  document.getElementById('r_so').textContent   = results.so.avg.toFixed(1)   + '/5';
+  document.getElementById('r_total').textContent = pct;
+
+  const v = document.getElementById('r_verdict');
+  if (pct >= 70) { v.className='verdict high'; v.textContent='✅ คุณค่าสูง — แนะนำให้จัดซื้อ'; }
+  else if (pct >= 45) { v.className='verdict med'; v.textContent='⚠️ คุณค่าปานกลาง — ควรทบทวนบางเกณฑ์'; }
+  else { v.className='verdict low'; v.textContent='❌ คุณค่าต่ำ — ควรพิจารณาทางเลือกอื่น'; }
+
+  document.getElementById('meatResult').style.display = 'block';
+  document.getElementById('meatResult').scrollIntoView({behavior:'smooth'});
+}
+
+function resetMeat() {
+  Object.keys(meatScores).forEach(k => meatScores[k] = 0);
+  document.querySelectorAll('.star-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.score-tag').forEach(t => t.textContent = '0/5');
+  document.getElementById('meatTotalScore').textContent = '0';
+  document.getElementById('meatBar').style.width = '0%';
+  document.getElementById('meatResult').style.display = 'none';
+}
+
+function toggleSection(header) {
+  const body = header.nextElementSibling;
+  header.classList.toggle('collapsed');
+  body.classList.toggle('collapsed');
+}
+
+// ══════════════════════════
+// QUIZ
+// ══════════════════════════
+const questions = [
+  {
+    q:'VBP ย่อมาจากอะไร?',
+    opts:['Value-Based Procurement','Variable Budget Planning','Volume-Based Purchasing','Vendor Budget Protocol'],
+    ans:0, exp:'VBP = Value-Based Procurement หรือ "การจัดซื้อเชิงคุณค่า" ซึ่งเน้นการพิจารณาคุณค่าองค์รวม ไม่ใช่แค่ราคาต่ำสุดครับ'
+  },
+  {
+    q:'MEAT ในบริบทของ VBP Framework หมายถึงอะไร?',
+    opts:['Most Effective And Tested','Most Economically Advantageous Tender','Maximum Efficiency Assessment Tool','Medical Equipment Acquisition Terms'],
+    ans:1, exp:'MEAT = Most Economically Advantageous Tender มาจาก EU Directive 2014 ที่กำหนดให้หน่วยงานรัฐต้องใช้เกณฑ์นี้ในการจัดซื้อครับ'
+  },
+  {
+    q:'ใครเป็นผู้เสนอแนวคิด Value-Based Healthcare เป็นครั้งแรก?',
+    opts:['WHO และ World Bank','Michael Porter และ Elizabeth Teisberg','NHS ของสหราชอาณาจักร','AHA ของสหรัฐอเมริกา'],
+    ans:1, exp:'Michael Porter และ Elizabeth Teisberg เสนอแนวคิด Value-Based Healthcare ในปี 2006 และนิยามว่า คุณค่า = ผลลัพธ์ที่ดี ÷ ต้นทุนรวมตลอดวงจรการรักษาครับ'
+  },
+  {
+    q:'MEAT VBP Framework มีกี่ชั้น (Layers) หลัก?',
+    opts:['2 ชั้น','3 ชั้น','4 ชั้น','5 ชั้น'],
+    ans:1, exp:'MEAT VBP Framework มี 3 ชั้นหลัก: (1) ต้นทุนรวม (2) ผลลัพธ์การรักษา และ (3) ประโยชน์ต่อผู้มีส่วนเกี่ยวข้อง — โดยมีชั้นที่ 4 เรื่องผลกระทบสังคมเพิ่มเติมครับ'
+  },
+  {
+    q:'ชั้นใดของ MEAT VBP Framework ที่พิจารณา "ผลกระทบต่อสิ่งแวดล้อม"?',
+    opts:['ชั้น 1: ต้นทุนรวม','ชั้น 2: ผลลัพธ์','ชั้น 3: ประโยชน์ผู้เกี่ยวข้อง','ชั้น 4: ผลกระทบต่อสังคม'],
+    ans:3, exp:'ผลกระทบต่อสิ่งแวดล้อมอยู่ในชั้น "Broader Impact on Society" ซึ่งครอบคลุมนวัตกรรม ความยั่งยืน และผลกระทบสังคม-เศรษฐกิจครับ'
+  },
+  {
+    q:'"Total Cost of Ownership (TCO)" คืออะไร?',
+    opts:['ราคาซื้อหน้าใบเสนอราคา','ราคาซื้อรวมภาษีมูลค่าเพิ่ม','ต้นทุนทั้งหมดตลอดอายุการใช้งาน รวมถึงบำรุงรักษาและบุคลากร','ราคาตลาดเฉลี่ยของผลิตภัณฑ์นั้น'],
+    ans:2, exp:'TCO คือต้นทุนทั้งหมดตลอดวงจรชีวิตของผลิตภัณฑ์ ซึ่งรวมราคาซื้อ + ค่าส่ง + ค่าฝึกอบรม + ค่าบำรุงรักษา + ค่าจัดเก็บ + เวลาบุคลากร + ค่ากำจัดครับ'
+  },
+  {
+    q:'CQO Model คืออะไร และมาจากที่ใด?',
+    opts:['Cost-Quality-Outcomes จากยุโรป','Cost-Quality-Outcomes จากอเมริกา (AHA ปี 2013)','Criteria-Quantification-Objectives จากองค์การอนามัยโลก','Cost-Quantity-Operations จากอังกฤษ'],
+    ans:1, exp:'CQO = Cost, Quality, Outcomes เปิดตัวโดย Association for Healthcare Resource and Materials Management (AHRMM) ส่วนหนึ่งของ American Hospital Association ในปี 2013 ครับ'
+  },
+  {
+    q:'การที่ผู้ขายยินดีร่วม "Risk Sharing" หมายความว่าอะไร?',
+    opts:['ผู้ขายแบ่งความเสี่ยงทางการเงินกับรัฐ','ผู้ขายยินดีรับผิดชอบร่วมหากผลลัพธ์ไม่เป็นไปตามที่คาดไว้','ผู้ขายรับประกันราคาคงที่ตลอดสัญญา','ผู้ขายให้ส่วนลดเพิ่มเติมในกรณีที่ซื้อจำนวนมาก'],
+    ans:1, exp:'Risk Sharing คือการที่ผู้ขายยินดีผูกผลประโยชน์กับผลลัพธ์จริง เช่น ลดราคาหากยาไม่ได้ผลตามที่วาดไว้ ซึ่งแสดงถึงความเชื่อมั่นในผลิตภัณฑ์ครับ'
+  },
+  {
+    q:'ข้อใด "ไม่ใช่" เกณฑ์ในชั้นประโยชน์ต่อผู้มีส่วนเกี่ยวข้อง (Stakeholder Benefits)?',
+    opts:['ความสะดวกสบายของผู้ป่วย','ความปลอดภัยของบุคลากร','ราคาซื้อต่ำสุด','การลดต้นทุนระยะยาวของระบบสาธารณสุข'],
+    ans:2, exp:'"ราคาซื้อต่ำสุด" เป็นส่วนหนึ่งของชั้นต้นทุน (Costs Layer) ไม่ใช่ชั้นประโยชน์ผู้เกี่ยวข้อง VBP มองว่าราคาเป็นแค่หนึ่งในหลายปัจจัยครับ'
+  },
+  {
+    q:'ใน MEAT VBP Framework เกณฑ์ทั้งหมดมีกี่ข้อ?',
+    opts:['21 เกณฑ์','31 เกณฑ์','41 เกณฑ์','51 เกณฑ์'],
+    ans:2, exp:'MEAT VBP Framework มีเกณฑ์ทั้งหมด 41 ข้อ แบ่งเป็นชั้นต้นทุน 17 เกณฑ์, ผลลัพธ์ 4 เกณฑ์, ประโยชน์ผู้เกี่ยวข้อง 13 เกณฑ์ และผลกระทบสังคม 7 เกณฑ์ครับ'
+  }
+];
+
+let currentQ = 0, userScore = 0, answered = false;
+
+function startQuiz() {
+  currentQ = 0; userScore = 0; answered = false;
+  document.getElementById('quizResultContainer').style.display = 'none';
+  document.getElementById('quizContainer').style.display = 'block';
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = questions[currentQ];
+  const pct = (currentQ / questions.length) * 100;
+  document.getElementById('qBar').style.width = pct + '%';
+  document.getElementById('qProgText').textContent = `ข้อ ${currentQ + 1} / ${questions.length}`;
+  document.getElementById('qScore').textContent = `คะแนน: ${userScore}`;
+  answered = false;
+
+  document.getElementById('quizContainer').innerHTML = `
+    <div class="quiz-card">
+      <div class="quiz-num">คำถามข้อที่ ${currentQ + 1}</div>
+      <div class="quiz-q">${q.q}</div>
+      <div class="quiz-options">
+        ${q.opts.map((o,i) => `<button class="quiz-opt" onclick="selectOpt(this,${i})">${o}</button>`).join('')}
+      </div>
+      <div class="quiz-explanation" id="exp">${q.exp}</div>
+    </div>
+    <div class="quiz-nav">
+      <div style="font-size:.85rem;color:var(--muted);">เลือกคำตอบเพื่อดำเนินการต่อ</div>
+      <button class="btn-quiz btn-next" id="btnNext" onclick="nextQ()" disabled>
+        ${currentQ < questions.length - 1 ? 'ข้อถัดไป →' : 'ดูผลคะแนน 🏆'}
+      </button>
+    </div>
+  `;
+}
+
+function selectOpt(btn, idx) {
+  if (answered) return;
+  answered = true;
+  const q = questions[currentQ];
+  const opts = btn.closest('.quiz-options').querySelectorAll('.quiz-opt');
+  opts.forEach(o => o.disabled = true);
+  if (idx === q.ans) {
+    btn.classList.add('correct');
+    userScore++;
+  } else {
+    btn.classList.add('wrong');
+    opts[q.ans].classList.add('correct');
+  }
+  document.getElementById('exp').classList.add('show');
+  document.getElementById('btnNext').disabled = false;
+  document.getElementById('qScore').textContent = `คะแนน: ${userScore}`;
+}
+
+function nextQ() {
+  currentQ++;
+  if (currentQ >= questions.length) showQuizResult();
+  else renderQuestion();
+}
+
+function showQuizResult() {
+  document.getElementById('quizContainer').style.display = 'none';
+  document.getElementById('quizResultContainer').style.display = 'block';
+  document.getElementById('qBar').style.width = '100%';
+  document.getElementById('qProgText').textContent = `เสร็จสิ้น ${questions.length} / ${questions.length}`;
+
+  const pct = Math.round(userScore / questions.length * 100);
+  document.getElementById('qFinalScore').textContent = `${userScore} / ${questions.length}`;
+  document.getElementById('qFinalSub').textContent = `คิดเป็น ${pct}% ของคะแนนทั้งหมด`;
+
+  const grade = document.getElementById('qGrade');
+  const fb    = document.getElementById('qFeedback');
+  if (pct >= 80) {
+    grade.style.cssText = 'background:#C8E6C9;color:#1B5E20;';
+    grade.textContent = '🏆 ยอดเยี่ยม!';
+    fb.textContent = 'คุณมีความเข้าใจเรื่อง Value-Based Procurement และ MEAT Framework ในระดับที่ดีมากครับ พร้อมนำแนวคิดนี้ไปประยุกต์ใช้ในการทำงานได้เลย';
+  } else if (pct >= 60) {
+    grade.style.cssText = 'background:#FFF9C4;color:#F57F17;';
+    grade.textContent = '👍 ดีแล้ว!';
+    fb.textContent = 'คุณมีพื้นฐานที่ดีครับ แนะนำให้ทบทวนหัวข้อที่ยังตอบผิดแล้วลองทำแบบทดสอบอีกครั้ง';
+  } else {
+    grade.style.cssText = 'background:var(--red-light);color:var(--red);';
+    grade.textContent = '📚 ต้องทบทวนเพิ่ม';
+    fb.textContent = 'ไม่เป็นไรครับ! ลองอ่านบทความในแท็บ "ทำความรู้จัก VBP" อีกครั้ง แล้วกลับมาทดสอบใหม่ได้เลย';
+  }
+}
+
+// ══════════════════════════
+// INIT
+// ══════════════════════════
+buildStars();
+startQuiz();
+</script>
+</body>
+</html>
